@@ -18,6 +18,8 @@ const Nav = ({ activePage, setActivePage }) => {
     { id: 'contact', label: t('nav_contact') },
   ];
   const go = (id) => { setActivePage(id); setMobileOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const hrefFor = (id) => (window.ROUTES && window.ROUTES[id] ? window.ROUTES[id].path : '/');
+  const linkTo = (id) => (e) => { e.preventDefault(); go(id); };
   return (
     <header className={scrolled ? 'nav-blur' : ''} style={{
       position: 'sticky', top: 0, zIndex: 50,
@@ -28,7 +30,7 @@ const Nav = ({ activePage, setActivePage }) => {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '16px 32px', gap: 24,
       }}>
-        <button onClick={() => go('home')} style={{
+        <a href="/" onClick={linkTo('home')} aria-label="Awadh Software Solutions — home" style={{
           display: 'flex', alignItems: 'center', gap: 12,
         }}>
           <span style={{ color: 'var(--accent)', display: 'flex' }}>
@@ -38,17 +40,18 @@ const Nav = ({ activePage, setActivePage }) => {
             <div className="display" style={{ fontSize: 17, fontWeight: 600 }}>Awadh</div>
             <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', color: 'var(--ink-3)', textTransform: 'uppercase' }}>Software Solutions</div>
           </div>
-        </button>
+        </a>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="desktop-only">
+        <nav aria-label="Primary" style={{ display: 'flex', alignItems: 'center', gap: 4 }} className="desktop-only">
           {items.map(it => (
-            <button key={it.id} onClick={() => go(it.id)} style={{
+            <a key={it.id} href={hrefFor(it.id)} onClick={linkTo(it.id)}
+              aria-current={activePage === it.id ? 'page' : undefined} style={{
               padding: '8px 14px', borderRadius: 999,
               fontSize: 14, fontWeight: 500,
               color: activePage === it.id ? 'var(--ink)' : 'var(--ink-3)',
               background: activePage === it.id ? 'var(--bg-2)' : 'transparent',
               transition: 'color 0.15s, background 0.15s',
-            }}>{it.label}</button>
+            }}>{it.label}</a>
           ))}
         </nav>
 
@@ -69,27 +72,29 @@ const Nav = ({ activePage, setActivePage }) => {
           <a href="tel:+917011650803" className="btn btn-ghost desktop-only" style={{ padding: '10px 16px', fontSize: 13 }}>
             <Icon.Phone /> {t('nav_phone_label')}
           </a>
-          <button onClick={() => go('contact')} className="btn btn-primary" style={{ padding: '10px 18px', fontSize: 14 }}>
+          <button onClick={() => go('contact')} className="btn btn-primary nav-cta" style={{ padding: '10px 18px', fontSize: 14 }}>
             {t('nav_cta')} <Icon.Arrow />
           </button>
-          <button onClick={() => setMobileOpen(o => !o)} className="mobile-only btn btn-ghost" style={{ padding: '8px 10px' }} aria-label="Menu">
+          <button onClick={() => setMobileOpen(o => !o)} className="mobile-only btn btn-ghost" style={{ padding: '8px 10px' }} aria-label="Menu" aria-expanded={mobileOpen}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
           </button>
         </div>
       </div>
       {mobileOpen && (
-        <div className="mobile-only" style={{ borderTop: '1px solid var(--line)', background: 'var(--bg)' }}>
+        <nav aria-label="Mobile" className="mobile-only" style={{ borderTop: '1px solid var(--line)', background: 'var(--bg)' }}>
           <div className="container" style={{ padding: '16px 20px', display: 'grid', gap: 4 }}>
             {items.map(it => (
-              <button key={it.id} onClick={() => go(it.id)} style={{
+              <a key={it.id} href={hrefFor(it.id)} onClick={linkTo(it.id)}
+                aria-current={activePage === it.id ? 'page' : undefined} style={{
+                display: 'block',
                 padding: '12px 14px', textAlign: 'left', borderRadius: 10,
                 fontSize: 16, fontWeight: 500,
                 color: activePage === it.id ? 'var(--ink)' : 'var(--ink-2)',
                 background: activePage === it.id ? 'var(--bg-2)' : 'transparent',
-              }}>{it.label}</button>
+              }}>{it.label}</a>
             ))}
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );
@@ -97,6 +102,8 @@ const Nav = ({ activePage, setActivePage }) => {
 
 const Footer = ({ setActivePage }) => {
   const { t } = useT();
+  const hrefFor = (id) => (window.ROUTES && window.ROUTES[id] ? window.ROUTES[id].path : '/');
+  const linkTo = (id) => (e) => { e.preventDefault(); setActivePage(id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   return (
     <footer style={{ borderTop: '1px solid var(--line)', background: 'var(--bg-2)', marginTop: 80 }}>
       <div className="container" style={{ padding: '64px 32px 32px' }}>
@@ -122,22 +129,22 @@ const Footer = ({ setActivePage }) => {
           <div>
             <h4 className="mono" style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: 16, fontWeight: 500 }}>{t('f_services')}</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10, fontSize: 14 }}>
-              <li><button onClick={() => setActivePage('services')}>Web applications</button></li>
-              <li><button onClick={() => setActivePage('services')}>Mobile apps (iOS / Android)</button></li>
-              <li><button onClick={() => setActivePage('services')}>AI / agentic products</button></li>
-              <li><button onClick={() => setActivePage('services')}>AI chatbots</button></li>
-              <li><button onClick={() => setActivePage('services')}>Digital marketing &amp; SEO</button></li>
+              <li><a href={hrefFor('services')} onClick={linkTo('services')}>Web application development</a></li>
+              <li><a href={hrefFor('services')} onClick={linkTo('services')}>Mobile app development (iOS / Android)</a></li>
+              <li><a href={hrefFor('services')} onClick={linkTo('services')}>AI / agentic product development</a></li>
+              <li><a href={hrefFor('services')} onClick={linkTo('services')}>AI chatbot development</a></li>
+              <li><a href={hrefFor('services')} onClick={linkTo('services')}>Digital marketing &amp; SEO / LLM SEO</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="mono" style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: 16, fontWeight: 500 }}>{t('f_studio')}</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 10, fontSize: 14 }}>
-              <li><button onClick={() => setActivePage('about')}>About us</button></li>
-              <li><button onClick={() => setActivePage('work')}>Selected work</button></li>
-              <li><button onClick={() => setActivePage('contact')}>Contact</button></li>
+              <li><a href={hrefFor('about')} onClick={linkTo('about')}>About us</a></li>
+              <li><a href={hrefFor('work')} onClick={linkTo('work')}>Selected work</a></li>
+              <li><a href={hrefFor('contact')} onClick={linkTo('contact')}>Contact</a></li>
               <li><a href="https://www.vishnumishra.com/" target="_blank" rel="noreferrer">Founder's portfolio ↗</a></li>
-              <li><a href="#">Careers</a></li>
+              <li><a href="mailto:info@awadhsoftwaresolutions.com?subject=Careers%20at%20Awadh%20Software%20Solutions">Careers</a></li>
             </ul>
           </div>
 
@@ -168,8 +175,8 @@ const Footer = ({ setActivePage }) => {
           <div className="mono">© 2026 AWADH SOFTWARE SOLUTIONS · awadhsoftware.com</div>
           <div className="mono" style={{ display: 'flex', gap: 20 }}>
             <span>Made with care in Ayodhya 🪔</span>
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
+            <a href="/privacy/">Privacy</a>
+            <a href="/terms/">Terms</a>
           </div>
         </div>
       </div>

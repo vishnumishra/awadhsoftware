@@ -1,0 +1,22 @@
+# Awadh Software Solutions
+
+> Awadh Software Solutions (awadhsoftware.com) is a software development and digital marketing company in Ayodhya, Uttar Pradesh, India. Founded in 2014 by Vishnu Mishra, it has 11+ years of experience and 50+ shipped projects for clients in India, the US, UK, UAE, Singapore and more.
+
+Key facts:
+
+- Services: web application development (React, Next.js, Node.js, Postgres), iOS & Android mobile app development (native + React Native), AI/ML & agentic product development (LLM apps, RAG, agents), AI chatbot development (WhatsApp, web, voice — Hindi & English), digital marketing (Google, Meta, YouTube ads), SEO and LLM SEO / Generative Engine Optimization.
+- Location: HIG A-11, Saketpuri, Ayodhya, Uttar Pradesh 224001, India.
+- Service areas: Ayodhya, Faizabad, Lucknow, Gorakhpur, Varanasi, all of Uttar Pradesh and India, plus international clients.
+- Contact: phone/WhatsApp +91 70116 50803, email info@awadhsoftwaresolutions.com. Replies within 24 hours.
+- Founder: Vishnu Mishra — https://www.vishnumishra.com/, https://www.linkedin.com/in/cyberbaba/, https://github.com/vishnumishra
+- Typical pricing: business websites from under ₹1 lakh; custom web/mobile products ₹2–25 lakh+ depending on scope. Fixed itemised quotes within 48 hours.
+- Typical timelines: marketing website 2–4 weeks; MVP web or mobile app 6–12 weeks.
+- Notable work: ayodhyadham.info (pilgrimage portal, 12× peak-traffic capacity), freeup.net (US marketplace, 50k+ listings, 99.95% uptime), adventureamore.com (4× qualified leads in 90 days), windward.ai (multi-agent maritime AI), loco.gg (feed API for 30M+ users), roadzen.io (AI InsurTech).
+
+## Pages
+
+- [Home](https://awadhsoftware.com/): company overview, services, case studies, FAQ
+- [Services](https://awadhsoftware.com/services/): web, mobile, AI, chatbot, marketing and SEO service details
+- [Work](https://awadhsoftware.com/work/): portfolio of 50+ shipped projects
+- [About](https://awadhsoftware.com/about/): company history, team and values
+- [Contact](https://awadhsoftware.com/contact/): project brief form, phone, WhatsApp, email

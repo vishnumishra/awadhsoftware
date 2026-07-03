@@ -307,6 +307,72 @@ section[id] { scroll-margin-top: 80px; }
   text-transform: uppercase;
 }
 
+/* ── Accessibility ──────────────────────────────────────────── */
+
+/* Skip-to-content link — visible only when focused */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.skip-link:focus {
+  left: 0;
+  top: 0;
+}
+
+/* ── FAQ accordion ──────────────────────────────────────────── */
+
+.faq-item {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  list-style: none;
+  transition: background 0.2s ease;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { background: var(--bg-2); }
+.faq-item .faq-chevron {
+  flex-shrink: 0;
+  color: var(--ink-3);
+  display: flex;
+  transition: transform 0.25s ease;
+}
+.faq-item[open] .faq-chevron { transform: rotate(180deg); color: var(--accent); }
+.faq-item > p {
+  margin: 0;
+  padding: 0 24px 22px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  max-width: 760px;
+}
+
+/* ── Static pre-render (SEO fallback, replaced when the app mounts) ── */
+
+.prerender a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.prerender a.btn { text-decoration: none; margin-right: 10px; margin-top: 8px; color: inherit; }
+.prerender a.btn-primary { color: var(--bg); }
+.prerender h2 { font-size: 26px; margin: 0 0 12px; }
+.prerender ul { padding-left: 20px; color: var(--ink-2); }
+.prerender li { margin-bottom: 8px; }
+
 /* ── Mobile & Responsive enhancements ───────────────────────── */
 
 /* Minimum touch targets */
@@ -392,8 +458,10 @@ section[id] { scroll-margin-top: 80px; }
     border-bottom: none !important;
   }
 
-  /* Nav */
+  /* Nav — hide the header CTA so the hamburger fits on-screen
+     (the same CTA exists in the hero, FAB and footer) */
   .nav-header { padding: 12px 16px !important; }
+  .nav-cta { display: none !important; }
 
   /* Footer bottom bar */
   .footer-bottom {

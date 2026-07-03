@@ -266,7 +266,6 @@ const Resources = () => {
         <div style={{ marginTop: 64, paddingTop: 40, borderTop: '1px solid var(--line)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 16 }}>
             <h3 className="display" style={{ fontSize: 24, margin: 0, fontWeight: 600 }}>{t('res_journal')}</h3>
-            <a href="#" className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }}>{t('res_all')} <Icon.Arrow/></a>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="resources-grid">
             {[
@@ -274,13 +273,13 @@ const Resources = () => {
               { d: '9 min read', t: 'LLM SEO 101: getting cited by ChatGPT in your category', cat: 'Marketing' },
               { d: '12 min read', t: 'Building a WhatsApp lead-qualification agent in 2 weeks', cat: 'AI' },
             ].map((b, i) => (
-              <a key={i} href="#" style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 24 }}>
+              <article key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 24 }}>
                 <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', justifyContent: 'space-between' }}>
                   <span>{b.cat}</span><span>{b.d}</span>
                 </div>
                 <h4 className="display" style={{ fontSize: 19, margin: 0, fontWeight: 600, lineHeight: 1.3 }}>{b.t}</h4>
-                <span style={{ fontSize: 13, color: 'var(--accent-ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>Read article <Icon.Arrow size={12}/></span>
-              </a>
+                <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Publishing soon</span>
+              </article>
             ))}
           </div>
         </div>
