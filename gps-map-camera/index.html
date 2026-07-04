@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <meta name="description" content="GPS Map Camera — capture photos stamped with your location, address, coordinates, map and timestamp." />
+  <title>GPS Map Camera</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+
+    <!-- ======== Camera stage ======== -->
+    <section class="stage" id="stage">
+      <video id="video" autoplay playsinline muted></video>
+
+      <div class="stage-overlay top">
+        <div class="gps-pill" id="gpsPill" data-state="off">
+          <span class="dot"></span>
+          <span id="gpsPillText">GPS off</span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="settingsBtn" title="Stamp settings" aria-label="Stamp settings">⚙</button>
+          <button class="icon-btn" id="flipBtn" title="Switch camera" aria-label="Switch camera">⟲</button>
+        </div>
+      </div>
+
+      <!-- Live preview of the stamp, mirrors what gets burned into the photo -->
+      <div class="stamp-preview" id="stampPreview" hidden>
+        <canvas id="stampMapCanvas" width="132" height="132"></canvas>
+        <div class="stamp-text">
+          <div class="stamp-title" id="stampTitle">Locating…</div>
+          <div class="stamp-line" id="stampAddress">Waiting for GPS fix</div>
+          <div class="stamp-line" id="stampCoords">—</div>
+          <div class="stamp-line" id="stampTime">—</div>
+        </div>
+      </div>
+
+      <div class="stage-msg" id="stageMsg">
+        <h1>GPS Map Camera</h1>
+        <p>Photos stamped with your live location, address, map and time.</p>
+        <button class="primary-btn" id="startBtn">Start camera</button>
+        <p class="hint">Requires camera &amp; location permission. Works over HTTPS or localhost.</p>
+      </div>
+    </section>
+
+    <!-- ======== Controls ======== -->
+    <section class="controls">
+      <div class="gallery" id="gallery" title="Captured photos"></div>
+      <button class="shutter" id="shutterBtn" disabled aria-label="Take photo">
+        <span class="shutter-inner"></span>
+      </button>
+      <div class="ctrl-right">
+        <button class="icon-btn big" id="shareBtn" disabled title="Share last photo" aria-label="Share last photo">↗</button>
+      </div>
+    </section>
+
+    <!-- ======== Settings sheet ======== -->
+    <dialog class="sheet" id="settingsSheet">
+      <h2>Stamp settings</h2>
+      <label class="row"><input type="checkbox" id="optMap" checked /> Show mini map</label>
+      <label class="row"><input type="checkbox" id="optAddress" checked /> Show address</label>
+      <label class="row"><input type="checkbox" id="optCoords" checked /> Show coordinates</label>
+      <label class="row"><input type="checkbox" id="optTime" checked /> Show date &amp; time</label>
+      <label class="row"><input type="checkbox" id="optAltitude" /> Show altitude &amp; accuracy</label>
+      <label class="row">Coordinate format
+        <select id="optCoordFmt">
+          <option value="dd">Decimal (28.6139, 77.2090)</option>
+          <option value="dms">DMS (28°36'50"N 77°12'32"E)</option>
+        </select>
+      </label>
+      <label class="row">Custom note (printed on stamp)
+        <input type="text" id="optNote" maxlength="60" placeholder="e.g. Site inspection — Plot 14" />
+      </label>
+      <button class="primary-btn" id="closeSettings">Done</button>
+    </dialog>
+
+  </main>
+
+  <canvas id="captureCanvas" hidden></canvas>
+  <script src="app.js"></script>
+</body>
+</html>
