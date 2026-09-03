@@ -1,0 +1,26 @@
+{
+  "name": "awadhsoftware",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Awadh Software Solutions — marketing site (Next.js static export)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "npx serve out",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "images": "node scripts/optimize-images.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.25",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "sharp": "^0.34.3",
+    "typescript": "^5.8.3"
+  }
+}

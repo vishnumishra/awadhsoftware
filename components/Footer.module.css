@@ -1,0 +1,24 @@
+.footer { background: var(--navy); color: #c6d2e4; }
+.inner { padding: 56px 32px 0; }
+.grid { display: grid; grid-template-columns: 1.4fr 0.9fr 1.1fr; gap: 48px; align-items: flex-start; }
+.logo { height: 44px; width: auto; display: block; margin-bottom: 18px; }
+.blurb { font-size: 14px; margin: 0; max-width: 300px; }
+.social { display: flex; gap: 10px; margin-top: 20px; }
+.social a { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; color: #fff; }
+.social a:hover { background: var(--accent); color: #fff; }
+.meetup { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13px; color: var(--accent); font-weight: 600; }
+.meetup:hover { color: #fff; }
+.h4 { color: #fff; font-size: 15px; font-weight: 600; margin: 0 0 16px; }
+.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; font-size: 14px; }
+.list a { color: #c6d2e4; }
+.list a:hover { color: var(--accent); }
+.contactList { gap: 12px; }
+.contactList li { display: flex; gap: 10px; align-items: flex-start; }
+.contactList svg { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.contactList a { word-break: break-all; }
+.bottom { margin-top: 44px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,.12); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 12.5px; color: #8fa0ba; }
+.legal { display: flex; gap: 20px; }
+.legal a { color: #8fa0ba; }
+.legal a:hover { color: var(--accent); }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: 34px; } }
+@media (max-width: 720px) { .inner { padding: 44px 20px 0; } }

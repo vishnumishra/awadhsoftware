@@ -1,0 +1,128 @@
+/* ---- Services grid ---- */
+.services { padding: 96px 0 80px; }
+.servicesGrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.svcCard { padding: 30px 18px 26px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; transition: transform .25s, box-shadow .25s, border-color .25s; box-shadow: var(--shadow-1); color: var(--ink); }
+.svcCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: rgba(244,121,31,.4); color: var(--ink); }
+.svcIcon { width: 84px; height: 84px; object-fit: contain; display: block; margin-bottom: 6px; }
+.svcTitle { font-size: 15px; margin: 0; line-height: 1.3; }
+.svcBlurb { font-size: 12.8px; margin: 0; flex: 1; line-height: 1.55; }
+.svcMore { color: var(--accent); font-weight: 600; font-size: 12.8px; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; }
+@media (max-width: 1180px) { .servicesGrid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px) { .services { padding: 64px 0 56px; } .servicesGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .svcCard { padding: 24px 14px 20px; } }
+
+/* ---- Ayodhya band ---- */
+.band { position: relative; background: var(--navy); overflow: hidden; padding: 52px 0; }
+.bandArt { position: absolute; left: 0; bottom: 0; height: 100%; width: auto; opacity: .9; object-fit: cover; object-position: left bottom; }
+.bandInner { position: relative; z-index: 1; display: grid; grid-template-columns: 250px 1fr 2fr; gap: 40px; align-items: center; }
+.bandCopy { grid-column: 2; }
+.bandTitle { font-size: clamp(22px, 2.4vw, 28px); color: #fff; margin: 0; }
+.bandTitle span { color: var(--accent); }
+.bandBlurb { font-size: 14.5px; color: #c3d0e2; margin: 0; max-width: 330px; }
+.bandItems { grid-column: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.bandItem { display: flex; gap: 14px; align-items: flex-start; }
+.ring { width: 46px; height: 46px; flex-shrink: 0; border-radius: 50%; border: 1.5px solid rgba(244,121,31,.5); display: flex; align-items: center; justify-content: center; }
+.itemT { font-weight: 600; font-size: 15.5px; color: #fff; }
+.itemD { font-size: 13px; color: #9fb0c9; margin-top: 3px; }
+@media (max-width: 1080px) { .bandArt { display: none; } .bandInner { grid-template-columns: 1fr; } .bandCopy, .bandItems { grid-column: 1; } }
+@media (max-width: 760px) { .bandItems { grid-template-columns: 1fr; gap: 20px; } }
+
+/* ---- About block ---- */
+.about { padding: 96px 0 88px; }
+.aboutGrid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
+.collage { position: relative; min-height: 380px; }
+.dots { position: absolute; right: 24px; top: 28px; width: 120px; height: 120px; opacity: .7; }
+.collageMain { width: 78%; border-radius: 16px; display: block; box-shadow: var(--shadow-2); }
+.collageTeam { position: absolute; right: 0; bottom: 0; width: 58%; border-radius: 14px; box-shadow: var(--shadow-2); border: 5px solid #fff; display: block; }
+.badge { position: absolute; left: 18px; bottom: 26px; background: var(--accent); color: #fff; border-radius: 12px; padding: 16px 20px; text-align: center; box-shadow: var(--shadow-2); }
+.badgeN { font-size: 30px; line-height: 1; }
+.badgeL { font-size: 11.5px; font-weight: 500; margin-top: 4px; }
+.aboutTitle { font-size: clamp(24px, 2.8vw, 32px); margin: 10px 0 0; max-width: 480px; }
+.aboutP { font-size: 14.5px; color: var(--ink-2); margin: 0 0 14px; }
+.points { list-style: none; padding: 0; margin: 8px 0 28px; display: grid; gap: 12px; }
+.points li { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 500; }
+@media (max-width: 900px) { .about { padding: 64px 0 56px; } .aboutGrid { grid-template-columns: 1fr; gap: 40px; } .collage { min-height: 0; padding-bottom: 60px; } }
+
+/* ---- Tech row ---- */
+.tech { padding: 24px 0 88px; }
+.techRow { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.techCard { padding: 14px 28px; font-weight: 600; font-size: 15px; color: var(--ink-2); display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-1); }
+.techCard::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+@media (max-width: 720px) { .tech { padding: 8px 0 56px; } .techCard { padding: 10px 18px; font-size: 14px; } }
+
+/* ---- Why choose ---- */
+.why { background: var(--navy); color: #fff; padding: 72px 0; }
+.whyGrid { display: grid; grid-template-columns: 0.9fr 2fr; gap: 48px; align-items: center; }
+.whyTitle { font-size: clamp(24px, 2.6vw, 32px); color: #fff; margin: 10px 0 0; }
+.whyItems { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; }
+.whyItem { display: flex; flex-direction: column; gap: 10px; }
+.whyRing { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(244,121,31,.55); display: flex; align-items: center; justify-content: center; background: rgba(244,121,31,.08); }
+.whyT { font-weight: 600; font-size: 15.5px; }
+.whyD { font-size: 13px; color: #9fb0c9; }
+@media (max-width: 900px) { .whyGrid { grid-template-columns: 1fr; gap: 36px; } .why { padding: 56px 0; } }
+
+/* ---- Case studies ---- */
+.cases { padding: 120px 0; background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.bigTitle { font-size: clamp(36px, 5vw, 60px); margin: 0 0 56px; max-width: 800px; line-height: 1.08; }
+.caseList { display: grid; gap: 24px; }
+.case { overflow: hidden; display: grid; grid-template-columns: 320px minmax(0, 1fr); }
+.cover { padding: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 280px; min-width: 0; overflow: hidden; color: inherit; transition: filter .25s; }
+.cover:hover { filter: brightness(1.12); }
+.cover img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: top center; display: block; transition: transform .4s; }
+.cover:hover img { transform: scale(1.03); }
+.coverBody { padding: 28px; display: flex; flex-direction: column; justify-content: space-between; flex: 1; gap: 16px; }
+.caseTag { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+.caseName { font-size: clamp(19px, 1.8vw, 24px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; overflow-wrap: anywhere; }
+.caseHeadline { font-size: 14px; margin: 12px 0 0; line-height: 1.5; }
+.visit { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table tr + tr { border-top: 1px solid var(--line); }
+.table th { width: 110px; padding: 20px 24px; color: var(--ink-3); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; vertical-align: top; white-space: nowrap; text-align: left; font-weight: 500; }
+.table td { padding: 20px 24px; color: var(--ink-2); line-height: 1.55; }
+.center { margin-top: 32px; display: flex; justify-content: center; }
+@media (max-width: 900px) {
+  .cases { padding: 72px 0; }
+  .case { grid-template-columns: 1fr; }
+  .cover { border-bottom: 1px solid var(--line); min-height: 200px; }
+  .table th { width: 90px; padding: 14px 16px; }
+  .table td { padding: 14px 16px; }
+}
+
+/* ---- Testimonials ---- */
+.testimonials { padding: 120px 0; }
+.testGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.quoteCard { padding: 28px; margin: 0; display: flex; flex-direction: column; gap: 20px; }
+.quoteCard svg { color: var(--accent); }
+.quoteCard blockquote { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink); }
+.quoteCard figcaption { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+.initials { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+.author { font-size: 13px; font-weight: 500; }
+.company { font-size: 12px; }
+@media (max-width: 1140px) { .testGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { .testimonials { padding: 72px 0; } .testGrid { grid-template-columns: 1fr; } }
+
+/* ---- Clients strip ---- */
+.clients { padding: 88px 0 8px; }
+.clientGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+.client { padding: 20px 12px; text-align: center; font-weight: 600; font-size: 14.5px; box-shadow: var(--shadow-1); border-top: 3px solid var(--client, var(--accent)); color: var(--client, var(--ink)); display: flex; align-items: center; justify-content: center; min-height: 74px; }
+a.client:hover { box-shadow: var(--shadow-2); color: var(--client, var(--accent)); }
+@media (max-width: 720px) { .clients { padding: 56px 0 0; } }
+
+/* ---- Community ---- */
+.community { padding: 80px 0 0; }
+.communityCard { display: flex; align-items: center; gap: 28px; padding: 26px 28px; flex-wrap: wrap; box-shadow: var(--shadow-1); }
+.communityN { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--accent-soft); border-radius: 12px; padding: 22px 26px; min-width: 132px; }
+.communityN .n { font-size: 34px; color: var(--accent); line-height: 1; }
+.communityN .nl { font-size: 12.5px; color: var(--ink-2); font-weight: 600; margin-top: 4px; }
+.communityBody { flex: 1; min-width: 240px; }
+.communityTitle { font-size: 21px; margin: 8px 0 8px; }
+.communityBlurb { font-size: 14px; margin: 0; max-width: 560px; }
+@media (max-width: 760px) { .community { padding: 56px 0 0; } .communityCard { gap: 18px; padding: 22px; } .communityCard > a { width: 100%; } }
+
+/* ---- Final CTA ---- */
+.cta { padding: 104px 0; position: relative; overflow: hidden; margin-top: 88px; background-image: linear-gradient(rgba(2,21,50,.86), rgba(2,21,50,.9)), url('/images/cta-banner.webp'); background-size: cover; background-position: center; }
+.ctaInner { position: relative; text-align: center; max-width: 880px; }
+.ctaTitle { font-size: clamp(30px, 4vw, 46px); margin: 12px 0 8px; color: #fff; }
+.ctaTitle span { color: var(--accent); }
+.ctaLede { font-size: 16px; margin: 0 auto 32px; max-width: 580px; color: #b9c6da; }
+.ctaBtns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+@media (max-width: 720px) { .cta { padding: 72px 0; margin-top: 56px; } }

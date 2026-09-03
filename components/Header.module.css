@@ -1,0 +1,33 @@
+.topbar { background: var(--navy); color: #dfe7f4; font-size: 12.5px; }
+.topbar a { color: #dfe7f4; }
+.topbar a:hover { color: var(--accent); }
+.topbarInner { display: flex; justify-content: space-between; align-items: center; padding: 8px 32px; gap: 16px; }
+.topbarGroup { display: flex; gap: 26px; align-items: center; }
+.topbarGroup.right { gap: 18px; }
+.topbarItem { display: inline-flex; gap: 7px; align-items: center; }
+.topbarItem svg { color: var(--accent); flex-shrink: 0; }
+.divider { width: 1px; height: 16px; background: rgba(255,255,255,.2); }
+.social { display: flex; gap: 10px; }
+.social a { display: flex; }
+
+.header { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid var(--line); transition: box-shadow .2s; }
+.header.scrolled { box-shadow: 0 4px 20px rgba(14,34,68,.08); }
+.headerInner { display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; gap: 24px; }
+.logo { display: flex; align-items: center; }
+.logo img { height: 42px; width: auto; display: block; }
+.nav { display: flex; align-items: center; gap: 8px; }
+.navLink { padding: 10px 14px; font-size: 14.5px; font-weight: 500; position: relative; color: var(--ink); transition: color .15s; }
+.navLink:hover, .navLink.active { color: var(--accent); }
+.navLink.active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 2px; height: 2px; background: var(--accent); border-radius: 1px; }
+.actions { display: flex; align-items: center; gap: 12px; }
+.langToggle { display: flex; align-items: center; background: var(--bg-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+.langToggle button { padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--ink-3); transition: background .15s, color .15s; }
+.langToggle button[aria-pressed="true"] { background: var(--navy-2); color: #fff; }
+.quote { padding: 11px 20px; font-size: 14px; }
+.burger { padding: 8px 10px; border: 1.5px solid var(--line-2); border-radius: 8px; display: flex; }
+.mobileMenu { border-top: 1px solid var(--line); background: #fff; }
+.mobileMenuInner { padding: 14px 20px 20px; display: grid; gap: 4px; }
+.mobileLink { padding: 13px 14px; text-align: left; border-radius: 8px; font-size: 16px; font-weight: 500; color: var(--ink); display: block; }
+.mobileLink.active { color: var(--accent); background: var(--accent-soft); }
+.mobileQuote { margin-top: 8px; }
+@media (max-width: 720px) { .headerInner { padding: 12px 20px; } .logo img { height: 36px; } }
