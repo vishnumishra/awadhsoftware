@@ -116,40 +116,26 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Tiro+Devanagari+Hindi:ital@0;1&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="styles.css"/>
 
   <style>
     .desktop-only { display: inherit; }
-    .mobile-only  { display: none; }
-
-    /* Hero arch only shows when there's truly room */
-    .hero-arch { display: block; }
-    @media (max-width: 1180px) { .hero-arch { display: none !important; } }
-
-    /* Tablet — hide desktop nav, show hamburger */
-    @media (max-width: 900px) {
+    .mobile-only { display: none; }
+    @media (max-width: 1080px) {
       .desktop-only { display: none !important; }
-      .mobile-only  { display: inherit; }
+      .mobile-only { display: inherit; }
     }
-
-    /* Tablet — 2-col grids */
-    @media (min-width: 601px) and (max-width: 900px) {
-      .services-grid, .portfolio-grid, .testimonials-grid,
-      .process-grid, .values-grid, .verticals-grid, .resources-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+    @media (max-width: 900px) {
+      .services-grid, .stats-grid, .process-grid, .portfolio-grid, .testimonials-grid, .values-grid, .footer-grid, .form-row, .contact-grid, .about-grid, .verticals-grid, .resources-grid {
+        grid-template-columns: 1fr !important;
       }
-      .stats-grid   { grid-template-columns: repeat(2, 1fr) !important; }
-      .footer-grid  { grid-template-columns: 1fr 1fr !important; }
-      .service-row  { grid-template-columns: 1fr !important; gap: 16px !important; padding: 32px 24px !important; }
+      .service-row { grid-template-columns: 1fr !important; gap: 16px !important; padding: 32px 24px !important; }
       article.card.case-study { grid-template-columns: 1fr !important; }
-      .case-cover   { border-right: none !important; border-bottom: 1px solid var(--line) !important; }
+      .case-cover { border-right: none !important; border-bottom: 1px solid var(--line) !important; min-height: 200px !important; }
     }
-
-    /* Tablet wide — 2 col for wider grids */
-    @media (min-width: 901px) and (max-width: 1100px) {
-      .services-grid, .portfolio-grid, .testimonials-grid,
-      .process-grid, .values-grid, .verticals-grid, .resources-grid {
+    @media (min-width: 901px) and (max-width: 1140px) {
+      .services-grid, .portfolio-grid, .testimonials-grid, .process-grid, .values-grid, .verticals-grid, .resources-grid {
         grid-template-columns: repeat(2, 1fr) !important;
       }
       .footer-grid { grid-template-columns: 1fr 1fr !important; }
@@ -180,6 +166,7 @@
   <script type="text/babel" src="components/hero.jsx"></script>
   <script type="text/babel" src="components/services.jsx"></script>
   <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/home-blocks.jsx"></script>
   <script type="text/babel" src="components/funnel.jsx"></script>
   <script type="text/babel" src="components/chatbot.jsx"></script>
   <script type="text/babel" src="components/pages.jsx"></script>

@@ -58,13 +58,13 @@ const Chatbot = ({ open, onClose }) => {
 
   if (!open) return null;
   return (
-    <div className="chatbot-overlay" style={{
+    <div style={{
       position: 'fixed', inset: 0, zIndex: 60,
       background: 'oklch(0.18 0.01 60 / 0.5)', backdropFilter: 'blur(4px)',
       display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
       padding: 24,
     }} onClick={onClose}>
-      <div className="chatbot-window" onClick={(e) => e.stopPropagation()} style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         width: 'min(440px, 100%)', height: 'min(640px, 90vh)',
         background: 'var(--bg)', borderRadius: 'var(--radius-xl)',
         border: '1px solid var(--line)', boxShadow: 'var(--shadow-3)',

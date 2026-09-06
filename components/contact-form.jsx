@@ -41,7 +41,32 @@ const ContactPageNew = () => {
 
   const next = () => { if (validateStep(step)) setStep(s => s + 1); };
   const back = () => setStep(s => Math.max(1, s - 1));
-  const submit = (e) => { e.preventDefault(); if (validateStep(3)) setSubmitted(true); };
+
+  // LEAD-CAPTURE: without this the brief is thrown away and the visitor is still
+  // shown a thank-you. Posts to Netlify Forms, which needs the matching hidden
+  // form that build.mjs injects into dist/index.html. build.mjs fails the build if
+  // this marker disappears, so a re-sync from Claude Design cannot silently
+  // reintroduce the data loss.
+  const [sending, setSending] = React.useState(false);
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!validateStep(3)) return;
+    setSending(true);
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ 'form-name': 'contact', ...form }).toString(),
+      });
+      if (!res.ok) throw new Error('form endpoint returned ' + res.status);
+      setSubmitted(true);
+    } catch (err) {
+      console.error('[contact] could not submit brief', err);
+      setErrors({ submit: "We couldn't send that just now. Please WhatsApp +91 70116 50803 or email info@awadhsoftwaresolutions.com." });
+    } finally {
+      setSending(false);
+    }
+  };
 
   if (submitted) {
     return (
@@ -261,8 +286,13 @@ const ContactPageNew = () => {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
                     <button type="button" onClick={back} className="btn btn-ghost">Back</button>
-                    <button type="submit" className="btn btn-primary">Send brief <Icon.Arrow/></button>
+                    <button type="submit" className="btn btn-primary" disabled={sending}>
+                      {sending ? 'Sending…' : 'Send brief'} <Icon.Arrow/>
+                    </button>
                   </div>
+                  {errors.submit && (
+                    <span style={{ fontSize: 13, color: 'oklch(0.55 0.2 30)', textAlign: 'center' }}>{errors.submit}</span>
+                  )}
                   <p className="mono muted" style={{ fontSize: 11, textAlign: 'center', margin: 0, letterSpacing: '0.06em' }}>
                     We'll only use this to reply. Never shared. No spam.
                   </p>

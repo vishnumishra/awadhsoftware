@@ -19,12 +19,11 @@ const ServicesPage = ({ setActivePage }) => {
       <section style={{ padding: '40px 0 120px' }}>
         <div className="container" style={{ display: 'grid', gap: 1, background: 'var(--line)', border: '1px solid var(--line)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
           {SERVICES.map((s, i) => {
-            const IconC = Icon[s.icon];
             return (
               <div key={s.id} style={{ background: 'var(--bg)', padding: '48px 40px', display: 'grid', gridTemplateColumns: '120px 1fr 1.4fr 200px', gap: 40, alignItems: 'flex-start' }} className="service-row">
                 <div className="mono" style={{ fontSize: 12, color: 'var(--accent)', letterSpacing: '0.18em' }}>0{i + 1}</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  <span style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconC /></span>
+                  <img src={'assets/' + s.pic + '.png'} alt="" aria-hidden="true" style={{ width: 96, height: 96, objectFit: 'contain', display: 'block' }}/>
                   <h3 className="display" style={{ fontSize: 28, margin: 0, fontWeight: 600 }} dangerouslySetInnerHTML={{ __html: s.title }}/>
                 </div>
                 <div>
@@ -37,7 +36,7 @@ const ServicesPage = ({ setActivePage }) => {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
                   <button onClick={() => setActivePage('contact')} className="btn btn-primary" style={{ padding: '10px 16px', fontSize: 13 }}>Get a quote <Icon.Arrow/></button>
-                  <a href="https://wa.me/917011650803" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ padding: '10px 16px', fontSize: 13 }}><Icon.WhatsApp/> WhatsApp</a>
+                  <a href="https://wa.me/917011650803" target="_blank" rel="noreferrer" className="btn" style={{ padding: '10px 16px', fontSize: 13, background: '#1faa53', color: '#fff' }}><Icon.WhatsApp/> WhatsApp</a>
                 </div>
               </div>
             );
@@ -49,21 +48,18 @@ const ServicesPage = ({ setActivePage }) => {
 };
 
 const PortfolioPage = ({ setActivePage }) => {
-  const tags = ['All Projects', 'Web Apps', 'Mobile Apps', 'AI & Chatbot', 'Digital Marketing'];
-  const [filter, setFilter] = React.useState('All Projects');
+  const tags = ['All', 'Web', 'Mobile', 'AI', 'Marketing'];
+  const [filter, setFilter] = React.useState('All');
   const allProjects = [
     ...PROJECTS,
-    { id: 'northstar', name: 'NorthStar Realty', url: 'northstar.in', tag: 'Web Apps · Real estate', blurb: 'Listing portal with drone tours and lead-routing to agents.' },
-    { id: 'awadhbites', name: 'AwadhBites', url: 'awadhbites.com', tag: 'Mobile Apps · F&B', blurb: 'Cloud-kitchen ordering app and operator dashboard.' },
-    { id: 'kisaansetu', name: 'KisaanSetu', url: 'kisaansetu.in', tag: 'AI & Chatbot · Agritech', blurb: 'WhatsApp chatbot in Hindi for crop advisory — used by 8,000+ farmers.' },
-    { id: 'saketcargo', name: 'Saket Cargo', url: 'saketcargo.com', tag: 'Digital Marketing · Logistics', blurb: 'Google + Meta lead funnel for a Lucknow-based logistics SMB. 4× pipeline.' },
-    { id: 'bluelotus', name: 'BlueLotus', url: 'bluelotus.app', tag: 'Mobile Apps · Wellness', blurb: 'Meditation app with personalised audio sessions and offline mode.' },
-    { id: 'aaravfinance', name: 'AaravFinance', url: 'aaravfin.in', tag: 'Web Apps · Fintech', blurb: 'Loan-against-property calculator + lead system for an NBFC.' },
+    { name: 'NorthStar Realty', url: 'northstar.in', tag: 'Web · Real estate', blurb: 'Listing portal with drone tours and lead-routing to agents.', color: 'oklch(0.92 0.04 200)' },
+    { name: 'AwadhBites', url: 'awadhbites.com', tag: 'Mobile · F&B', blurb: 'Cloud-kitchen ordering app and operator dashboard.', color: 'oklch(0.93 0.05 30)' },
+    { name: 'KisaanSetu', url: 'kisaansetu.in', tag: 'AI · Agritech', blurb: 'WhatsApp chatbot in Hindi for crop advisory — used by 8,000+ farmers.', color: 'oklch(0.93 0.05 130)' },
+    { name: 'Saket Cargo', url: 'saketcargo.com', tag: 'Marketing · Logistics', blurb: 'Google + Meta lead funnel for a Lucknow-based logistics SMB. 4× pipeline.', color: 'oklch(0.92 0.04 270)' },
+    { name: 'BlueLotus', url: 'bluelotus.app', tag: 'Mobile · Wellness', blurb: 'Meditation app with personalised audio sessions and offline mode.', color: 'oklch(0.93 0.05 250)' },
+    { name: 'AaravFinance', url: 'aaravfin.in', tag: 'Web · Fintech', blurb: 'Loan-against-property calculator + lead system for an NBFC.', color: 'oklch(0.92 0.05 100)' },
   ];
-  const filtered = filter === 'All Projects'
-    ? allProjects
-    : allProjects.filter(p => p.tag.includes(filter.replace(' Apps','').replace(' & Chatbot','').replace(' Marketing','')));
-
+  const filtered = filter === 'All' ? allProjects : allProjects.filter(p => p.tag.includes(filter));
   return (
     <main>
       <section style={{ padding: '80px 0 40px' }}>
@@ -75,15 +71,14 @@ const PortfolioPage = ({ setActivePage }) => {
           <p className="muted" style={{ fontSize: 18, maxWidth: 640, marginBottom: 32 }}>
             From Ayodhya pilgrimage portals to North-American marketplaces — a sample of the products we've built and continue to maintain.
           </p>
-          <div className="filter-chips">
-            {tags.map(tag => (
-              <button key={tag} onClick={() => setFilter(tag)} style={{
-                padding: '10px 20px', borderRadius: 999, fontSize: 13, fontWeight: 500,
-                background: filter === tag ? 'var(--accent)' : 'var(--bg-2)',
-                color: filter === tag ? 'oklch(0.18 0.01 60)' : 'var(--ink-2)',
-                border: '1px solid ' + (filter === tag ? 'var(--accent)' : 'var(--line)'),
-                transition: 'all 0.15s ease',
-              }}>{tag}</button>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {tags.map(t => (
+              <button key={t} onClick={() => setFilter(t)} style={{
+                padding: '8px 16px', borderRadius: 999, fontSize: 13, fontWeight: 500,
+                background: filter === t ? 'var(--ink)' : 'var(--bg-2)',
+                color: filter === t ? 'var(--bg)' : 'var(--ink-2)',
+                border: '1px solid ' + (filter === t ? 'var(--ink)' : 'var(--line)'),
+              }}>{t}</button>
             ))}
           </div>
         </div>
@@ -92,34 +87,20 @@ const PortfolioPage = ({ setActivePage }) => {
       <section style={{ padding: '40px 0 120px' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }} className="portfolio-grid">
-            {filtered.map((p) => (
-              <a key={p.name}
-                href={p.href || '#'}
-                target={p.href ? '_blank' : undefined}
-                rel={p.href ? 'noreferrer' : undefined}
-                onClick={!p.href ? (e) => e.preventDefault() : undefined}
-                className="card" style={{
-                padding: 0, overflow: 'hidden', background: 'var(--bg-2)',
-                transition: 'transform 0.25s ease, box-shadow 0.25s ease', cursor: 'pointer',
-                display: 'flex', flexDirection: 'column',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 20px 48px oklch(0 0 0 / 0.4)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}>
-                <div style={{ aspectRatio: '4/3', borderBottom: '1px solid var(--line)', overflow: 'hidden', background: 'oklch(0.18 0.04 260)' }}>
-                  <ProjectMockup id={p.id || p.name.toLowerCase().replace(/ /g,'')} />
+            {filtered.map((p, i) => (
+              <div key={p.name} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div style={{ aspectRatio: '4/3', background: p.color, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--line)' }}>
+                  <div className="display" style={{ fontSize: 32, fontWeight: 600, color: 'oklch(0.18 0.01 60)', letterSpacing: '-0.02em', textAlign: 'center', padding: 16 }}>{p.name}</div>
                 </div>
-                <div style={{ padding: '20px 22px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 className="display" style={{ fontSize: 18, margin: 0, fontWeight: 600 }}>{p.name}</h3>
-                    <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)' }}>{p.url}</span>
+                <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <h3 className="display" style={{ fontSize: 20, margin: 0, fontWeight: 600 }}>{p.name}</h3>
+                    <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>{p.url}</span>
                   </div>
                   <div className="chip" style={{ alignSelf: 'flex-start' }}><span className="dot"/>{p.tag}</div>
                   <p className="muted" style={{ fontSize: 13, margin: 0 }}>{p.blurb}</p>
-                  <span style={{ fontSize: 13, color: 'var(--accent-ink)', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                    {p.href ? 'Visit site' : 'View case study'} <Icon.Arrow size={12}/>
-                  </span>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
         </div>
@@ -146,9 +127,8 @@ const AboutPage = ({ setActivePage }) => (
               We chose to grow in Ayodhya on purpose. The discipline of this city — its rhythm, its values — shapes how we work. We don't take on more than we can do well. We tell clients honestly when an idea needs surgery. And we stay around long after launch, because most of our work is with people we've worked with for years.
             </p>
             <div style={{ display: 'flex', gap: 12, marginTop: 32, flexWrap: 'wrap' }}>
-              <a href="https://www.vishnumishra.com/" target="_blank" rel="noreferrer" className="btn btn-primary">Founder's portfolio <Icon.Arrow/></a>
-              <a href="https://www.linkedin.com/in/cyberbaba/" target="_blank" rel="noreferrer" className="btn btn-ghost"><Icon.Linkedin/> LinkedIn</a>
-              <a href="https://github.com/vishnumishra" target="_blank" rel="noreferrer" className="btn btn-ghost"><Icon.Github/> GitHub</a>
+              <a href="https://www.linkedin.com/in/cyberbaba/" target="_blank" rel="noreferrer" className="btn btn-ghost"><Icon.Linkedin/> Founder on LinkedIn</a>
+              <a href="https://github.com/vishnumishra" target="_blank" rel="noreferrer" className="btn btn-ghost"><Icon.Github/> GitHub · vishnumishra</a>
             </div>
           </div>
           <div className="card" style={{ padding: 32, alignSelf: 'flex-start' }}>
@@ -230,7 +210,7 @@ const ContactPage = () => {
               We'll get back to you within 24 hours — usually much sooner. In the meantime, feel free to message us on WhatsApp.
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a href="https://wa.me/917011650803" target="_blank" rel="noreferrer" className="btn btn-accent"><Icon.WhatsApp/> WhatsApp now</a>
+              <a href="https://wa.me/917011650803" target="_blank" rel="noreferrer" className="btn" style={{ background: '#1faa53', color: '#fff' }}><Icon.WhatsApp/> WhatsApp now</a>
               <button onClick={() => { setSubmitted(false); setForm({ name: '', email: '', phone: '', service: 'Web application', budget: '₹2L–5L', message: '' }); }} className="btn btn-ghost">Send another</button>
             </div>
           </div>

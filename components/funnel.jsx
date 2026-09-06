@@ -100,7 +100,7 @@ const CASES = [
     name: 'AyodhyaDham.info',
     tag: 'Tourism · Govt',
     headline: 'A digital pilgrimage gateway, built for peak Ram Navami load.',
-    color: 'oklch(0.93 0.05 60)',
+    color: '#C2610F', ink: '#FFF6EA', dim: 'rgba(255,246,234,.78)', shot: 'case-ayodhyadham', url: 'https://ayodhyadham.info',
     rows: [
       ['Problem', 'Devotees had no single portal for darshan timings, lodging and live updates — leading to crowding and missed information during peak festivals.'],
       ['Solution', 'A pilgrimage portal with booking systems, virtual tours, multilingual content and live darshan/aarti updates.'],
@@ -113,7 +113,7 @@ const CASES = [
     name: 'FreeUp.net',
     tag: 'Marketplace · USA',
     headline: 'A two-sided marketplace for free goods, scaled across North America.',
-    color: 'oklch(0.92 0.05 150)',
+    color: '#3D3DDB', ink: '#F0F0FF', dim: 'rgba(240,240,255,.78)', shot: 'case-freeup', url: 'https://freeup.net',
     rows: [
       ['Problem', 'A complex multi-tier marketplace needed secure billing, role-based access, geo-fenced listings and an admin console.'],
       ['Solution', 'End-to-end product build: marketplace, listings, in-app messaging, secure billing, tiered moderator access, admin dashboards.'],
@@ -126,7 +126,7 @@ const CASES = [
     name: 'AdventureAmore.com',
     tag: 'Travel · DTC',
     headline: 'Premium travel brand, rebuilt around conversion.',
-    color: 'oklch(0.91 0.05 230)',
+    color: '#0B4F3C', ink: '#EDF5F1', dim: 'rgba(237,245,241,.78)', shot: 'case-adventureamore', url: 'https://adventureamore.com',
     rows: [
       ['Problem', 'Beautiful brand, weak funnel — site got traffic, but enquiries leaked at every step.'],
       ['Solution', 'High-end UI/UX, mobile-first itinerary builder, multi-step lead form, WhatsApp drop-offs, paid-ads landing pages.'],
@@ -148,14 +148,20 @@ const CaseStudies = ({ setActivePage }) => {
 
       <div style={{ display: 'grid', gap: 24 }}>
         {CASES.map((c, i) => (
-          <article key={c.id} className="card case-study" style={{ overflow: 'hidden', display: 'grid', gridTemplateColumns: '320px 1fr', gap: 0 }}>
-            <div style={{ background: c.color, padding: 32, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRight: '1px solid var(--line)', minHeight: 280 }} className="case-cover">
-              <div className="mono" style={{ fontSize: 11, color: 'oklch(0.32 0.01 60)', letterSpacing: '0.16em', textTransform: 'uppercase' }}>Case 0{i + 1} · {c.tag}</div>
+          <article key={c.id} className="card case-study" style={{ overflow: 'hidden', display: 'grid', gridTemplateColumns: '320px minmax(0,1fr)', gap: 0 }}>
+            <a href={c.url} target="_blank" rel="noreferrer" style={{ background: c.color, padding: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 280, minWidth: 0, overflow: 'hidden', color: 'inherit' }} className="case-cover">
+              {c.shot && <img src={'assets/' + c.shot + '.png'} alt={c.name + ' website'} style={{ width: '100%', height: 'auto', display: 'block' }}/>}
+              <div style={{ padding: 28, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, gap: 16 }}>
+              <div className="mono" style={{ fontSize: 11, color: c.dim, letterSpacing: '0.16em', textTransform: 'uppercase' }}>Case 0{i + 1} · {c.tag}</div>
               <div>
-                <div className="display" style={{ fontSize: 32, fontWeight: 600, color: 'oklch(0.18 0.01 60)', letterSpacing: '-0.02em', lineHeight: 1.05 }}>{c.name}</div>
-                <p style={{ fontSize: 14, color: 'oklch(0.28 0.01 60)', margin: '12px 0 0', lineHeight: 1.5 }}>{c.headline}</p>
+                <div className="display" style={{ fontSize: 'clamp(19px, 1.8vw, 24px)', fontWeight: 600, color: c.ink, letterSpacing: '-0.02em', lineHeight: 1.15, overflowWrap: 'anywhere', wordBreak: 'break-word', minWidth: 0 }}>{c.name}</div>
+                <p style={{ fontSize: 14, color: c.dim, margin: '12px 0 0', lineHeight: 1.5 }}>{c.headline}</p>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 14, fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>Visit site
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+                </span>
               </div>
-            </div>
+              </div>
+            </a>
             <div style={{ padding: 0 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                 <tbody>

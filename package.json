@@ -1,0 +1,24 @@
+{
+  "name": "awadh-software-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Awadh Software Solutions — marketing site. Source is synced from Claude Design; dist/ is the production build.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "clean": "rm -rf dist",
+    "preview": "npm run build && node --run serve",
+    "serve": "node -e \"import('node:http').then(async({default:h})=>{const{readFile}=await import('node:fs/promises');const{extname,join,normalize}=await import('node:path');const T={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.webmanifest':'application/manifest+json','.xml':'application/xml','.txt':'text/plain'};h.createServer(async(q,s)=>{let p=decodeURIComponent(q.url.split('?')[0]);if(p.endsWith('/'))p+='index.html';const f=join('dist',normalize(p).replace(/^([.][.][/])+/,''));try{const b=await readFile(f);s.writeHead(200,{'content-type':T[extname(f)]||'application/octet-stream'});s.end(b);}catch{s.writeHead(404);s.end('404');}}).listen(4173,()=>console.log('http://127.0.0.1:4173'));})\"",
+    "test": "npm run build && node test/build-output.test.mjs && node test/chat-function.test.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0",
+    "esbuild": "^0.28.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sharp": "^0.35.4"
+  }
+}

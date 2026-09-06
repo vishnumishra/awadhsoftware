@@ -1,2 +1,17 @@
 .DS_Store
 *.log
+
+# Local Netlify folder
+.netlify
+
+# Build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Local tooling / secrets
+.claude/
+.env
+.env.*
+!.env.example

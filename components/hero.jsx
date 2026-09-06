@@ -1,160 +1,89 @@
-// Hero + Marquee + Stats
-
+// Hero — matches comp: faded temple right, orange pattern wedge, navy stats bar inside hero
+const HERO_L = {
+  en: {
+    l1: 'Building', l2: 'Digital Solutions', l3: 'Inspired by Ayodhya',
+    lede: 'We help businesses and organizations with innovative digital solutions, modern technologies and a customer-first approach.',
+    cta1: 'Explore Services', cta2: 'View Our Work',
+    values: ['Client Focused', 'Innovative Solutions', 'Quality & Reliability', 'Long Term Partnership'],
+    stats: [
+      { n: '50+', l: 'Happy Clients' },
+      { n: '120+', l: 'Projects Delivered' },
+      { n: '8+', l: 'Years Experience' },
+      { n: '100%', l: 'Client Satisfaction' },
+    ],
+  },
+  hi: {
+    l1: 'निर्माण', l2: 'डिजिटल समाधान', l3: 'अयोध्या से प्रेरित',
+    lede: 'हम व्यवसायों और संस्थाओं को नवीन डिजिटल समाधान, आधुनिक तकनीक और ग्राहक-प्रथम दृष्टिकोण के साथ सहयोग देते हैं।',
+    cta1: 'सेवाएँ देखें', cta2: 'हमारा काम देखें',
+    values: ['ग्राहक-केंद्रित', 'नवीन समाधान', 'गुणवत्ता व विश्वसनीयता', 'दीर्घकालिक साझेदारी'],
+    stats: [
+      { n: '50+', l: 'संतुष्ट क्लाइंट' },
+      { n: '120+', l: 'प्रोजेक्ट डिलीवर' },
+      { n: '8+', l: 'वर्षों का अनुभव' },
+      { n: '100%', l: 'क्लाइंट संतुष्टि' },
+    ],
+  },
+};
+const StatIcon = ({ i }) => {
+  const paths = [
+    <g key="a"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.4 2.8-5 5.5-5s4.9 1.6 5.5 5"/><circle cx="16.5" cy="8.5" r="2.6"/><path d="M15.5 13.6c2.4.2 4.2 1.6 4.8 4.4"/></g>,
+    <g key="b"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9.5h16M8 5V3M16 5V3M8 13h3M8 16.5h5"/></g>,
+    <g key="c"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></g>,
+    <g key="d"><path d="M12 3l7 2.5v5.5c0 4.5-3 8.4-7 10-4-1.6-7-5.5-7-10V5.5L12 3z"/><path d="M9 12l2.2 2.2L15.5 9.8"/></g>,
+  ];
+  return <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">{paths[i]}</svg>;
+};
+const ValueIcon = ({ i }) => {
+  const g = [
+    <g key="a"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.6"/><path d="M12 3.6v3M12 17.4v3M3.6 12h3M17.4 12h3"/></g>,
+    <g key="b"><path d="M9.2 17.4h5.6M10 20.4h4"/><path d="M12 3.6a5.6 5.6 0 0 1 3.4 10.1c-.5.4-.8 1-.8 1.6H9.4c0-.6-.3-1.2-.8-1.6A5.6 5.6 0 0 1 12 3.6z"/></g>,
+    <g key="c"><path d="M12 3.4l6.6 2.4v5.1c0 4.2-2.8 7.8-6.6 9.3-3.8-1.5-6.6-5.1-6.6-9.3V5.8L12 3.4z"/><path d="M9.3 12.1l2 2 3.9-4.1"/></g>,
+    <g key="d"><path d="M3.4 12.6l3.2-3.2 3.4 3.1a2 2 0 0 0 2.7 0l1-.9 4.9 4.3"/><path d="M20.6 11.4l-3.2 3.2M7.6 8.2l3.5-2.6c.6-.4 1.4-.5 2-.1l3.6 2.1"/></g>,
+  ];
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">{g[i]}</svg>;
+};
 const Hero = ({ setActivePage, onChatOpen }) => {
-  const { t } = useT();
+  const { lang } = useT();
+  const L = HERO_L[lang] || HERO_L.en;
   return (
-    <section style={{ position: 'relative', overflow: 'hidden', paddingTop: 56, paddingBottom: 96 }}>
-      <div className="sun-rays" />
-      {/* Faint dotted constellation grid */}
-      <div className="dot-grid" style={{
-        position: 'absolute', inset: 0, opacity: 0.35,
-        maskImage: 'radial-gradient(circle at 50% 30%, black, transparent 70%)',
-        WebkitMaskImage: 'radial-gradient(circle at 50% 30%, black, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
-
-      <div className="container" style={{ position: 'relative' }}>
-        <div style={{ maxWidth: 880 }}>
-          <div className="eyebrow" style={{ marginBottom: 24, flexWrap: 'wrap' }}>
-            <span>{t('hero_eyebrow_a')}</span>
-            <span style={{ color: 'var(--accent)' }}>·</span>
-            <span>{t('hero_eyebrow_b')}</span>
-          </div>
-
-          <h1 className="display" style={{
-            fontSize: 'clamp(40px, 6.4vw, 96px)',
-            margin: '0 0 28px',
-          }}>
-            {t('hero_title_1')} <em style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 400 }}>{t('hero_title_em')}</em><br/>
-            {t('hero_title_2')}<br/>
-            {t('hero_title_3')}
+    <section className="hero-sec">
+      <img src="assets/hero-fade.png" alt="Ayodhya temples on the Sarayu riverfront at sunset" className="hero-photo"/>
+      <div className="container hero-inner">
+        <div className="hero-copy">
+          <div className="hero-dashes" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h1 className="hero-head display">
+            <span className="slab">{L.l1}</span>
+            <span className="slab accent">{L.l2}</span>
+            <span className="slab">{L.l3}</span>
           </h1>
-
-          <p style={{ fontSize: 'clamp(17px, 1.4vw, 21px)', color: 'var(--ink-2)', maxWidth: 640, margin: '0 0 40px', lineHeight: 1.55 }}>
-            {t('hero_lede_a')} <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{t('hero_lede_b_a')}</strong>, <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{t('hero_lede_b_b')}</strong>, {t('hero_lede_b_c')}
-          </p>
-
-          <div className="hero-ctas" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 56 }}>
-            <button onClick={() => setActivePage('contact')} className="btn btn-primary">
-              {t('hero_cta_primary')} <Icon.Arrow />
-            </button>
-            <button onClick={onChatOpen} className="btn btn-accent">
-              <Icon.Spark /> {t('hero_cta_ai')}
-            </button>
-            <button onClick={() => setActivePage('work')} className="btn btn-ghost">
-              {t('hero_cta_work')}
+          <p className="hero-lede">{L.lede}</p>
+          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            <button onClick={() => { setActivePage('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="btn btn-primary">{L.cta1} <Icon.Arrow /></button>
+            <button onClick={() => { setActivePage('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="btn btn-ghost">
+              {L.cta2}
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" strokeWidth="1.4"/><path d="M10 8.8l5.2 3.2-5.2 3.2V8.8z" fill="currentColor"/></svg>
             </button>
           </div>
-
-          {/* GEO Quick Answer block — engineered for LLM parsing */}
-          <div data-geo-answer="awadh-software-solutions" style={{
-            border: '1px solid var(--line)', borderRadius: 'var(--radius-lg)',
-            padding: '20px 24px', background: 'var(--bg-2)',
-            maxWidth: 720, marginBottom: 32, position: 'relative',
-          }}>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 6, height: 6, borderRadius: 3, background: 'var(--accent)' }}/>
-              {t('quick_answer_label')}
-            </div>
-            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: 'var(--ink-2)' }}>
-              {t('quick_answer')}
-            </p>
-          </div>
-
-          {/* Inline trust row */}
-          <div className="hero-trust" style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'center', color: 'var(--ink-3)', fontSize: 13 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ display: 'inline-flex', width: 8, height: 8, borderRadius: '50%', background: 'oklch(0.62 0.16 150)' }} />
-              <span>{t('avail')}</span>
-            </div>
-            <div>{t('yrs')}</div>
-            <div>{t('shipped')}</div>
-            <div>{t('countries')}</div>
-          </div>
+          <ul className="hero-values">
+            {L.values.map((v, i) => (
+              <li key={v}><span className="hv-badge"><ValueIcon i={i}/></span>{v}</li>
+            ))}
+          </ul>
         </div>
-
-        {/* Right side floating panel — heritage arch with abstract product preview */}
-        <div className="hero-arch" style={{
-          position: 'absolute', right: 32, top: 80, width: 360, height: 460,
-          pointerEvents: 'none',
-        }}>
-          <div className="jharokha" style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(180deg, var(--bg-2), var(--bg))',
-          }}>
-            {/* Inner arch */}
-            <div style={{
-              position: 'absolute', inset: '20px 20px 20px 20px',
-              border: '1px dashed var(--line-2)',
-              borderRadius: '180px 180px 12px 12px',
-            }} />
-            {/* Abstract product cards */}
-            <div style={{ position: 'absolute', inset: '60px 36px 36px 36px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ height: 12, width: '60%', borderRadius: 4, background: 'var(--accent)' }} />
-              <div style={{ height: 8, width: '40%', borderRadius: 4, background: 'var(--line-2)' }} />
-              <div style={{ flex: 1, marginTop: 8, borderRadius: 12, border: '1px solid var(--line)', background: 'var(--bg)', display: 'flex', flexDirection: 'column', padding: 14, gap: 10 }}>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)' }} />
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--line-2)' }} />
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--line-2)' }} />
-                </div>
-                <div style={{ height: 6, borderRadius: 3, background: 'var(--line)', width: '90%' }} />
-                <div style={{ height: 6, borderRadius: 3, background: 'var(--line)', width: '70%' }} />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 6 }}>
-                  <div style={{ height: 50, borderRadius: 8, background: 'oklch(0.93 0.05 60)' }} />
-                  <div style={{ height: 50, borderRadius: 8, background: 'var(--bg-2)', border: '1px solid var(--line)' }} />
-                </div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 'auto' }}>
-                  <div style={{ height: 24, borderRadius: 6, background: 'var(--ink)', flex: 1 }} />
-                  <div style={{ height: 24, borderRadius: 6, background: 'var(--bg-2)', border: '1px solid var(--line)', flex: 1 }} />
-                </div>
+        <div className="stats-bar">
+          {L.stats.map((s, i) => (
+            <div key={i}>
+              <StatIcon i={i}/>
+              <div>
+                <div className="display" style={{ fontSize: 21, lineHeight: 1.1 }}>{s.n}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.72)' }}>{s.l}</div>
               </div>
             </div>
-            {/* Sun ornament */}
-            <div style={{
-              position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
-              width: 28, height: 28,
-            }}>
-              <svg viewBox="0 0 28 28" width="28" height="28">
-                <circle cx="14" cy="14" r="5" fill="var(--accent)"/>
-                {Array.from({ length: 12 }).map((_, i) => {
-                  const a = (i / 12) * Math.PI * 2;
-                  const x1 = 14 + Math.cos(a) * 8, y1 = 14 + Math.sin(a) * 8;
-                  const x2 = 14 + Math.cos(a) * 12, y2 = 14 + Math.sin(a) * 12;
-                  return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--accent)" strokeWidth="1.3" strokeLinecap="round"/>;
-                })}
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Logo marquee */}
-      <div style={{ marginTop: 80, borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', overflow: 'hidden', background: 'var(--bg-2)' }}>
-        <div style={{ padding: '20px 0' }}>
-          <div className="marquee-track">
-            {[...Array(2)].map((_, dup) => (
-              <React.Fragment key={dup}>
-                {[
-                  'AyodhyaDham', 'FreeUp', 'Adventure Amore', 'KashiTech', 'SarayuLabs',
-                  'TempleTrust', 'NorthStar Realty', 'AwadhBites', 'Saket Cargo',
-                  'AaravFinance', 'BlueLotus', 'KisaanSetu',
-                ].map(name => (
-                  <span key={`${dup}-${name}`} className="display" style={{
-                    fontSize: 24, color: 'var(--ink-3)', fontWeight: 500, letterSpacing: '-0.01em',
-                    display: 'flex', alignItems: 'center', gap: 56,
-                  }}>
-                    {name}
-                    <span style={{ width: 5, height: 5, background: 'var(--accent)', borderRadius: '50%' }} />
-                  </span>
-                ))}
-              </React.Fragment>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 };
-
 window.Hero = Hero;
