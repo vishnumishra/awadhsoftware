@@ -29,7 +29,10 @@ const LEAD_FIELDS = [
   'name', 'email', 'phone', 'company', 'message', 'contactPref',
 ];
 
-/* The pages the app can show, their URLs, and the per-page SEO copy. Each one is
+/* The pages the app can show, their URLs, and the per-page SEO copy.
+ * Flat files (services.html), not directories: with Netlify's pretty URLs a flat
+ * file is served at /services directly, whereas services/index.html 301-redirects
+ * to /services/ and would leave every canonical pointing at a redirect. Each one is
  * prerendered to static HTML so search engines get five indexable pages and AI
  * crawlers - which mostly do not execute JavaScript - get the real content. */
 const PAGES = [
@@ -44,7 +47,7 @@ const PAGES = [
   {
     route: 'services',
     path: '/services',
-    file: 'services/index.html',
+    file: 'services.html',
     title: 'Services — Web, Mobile, AI, Chatbots, SEO & Ads · Awadh Software Solutions',
     description:
       'Six capabilities under one roof: web applications, iOS and Android apps, AI/ML and agentic products, AI chatbots, digital marketing, and SEO including LLM SEO. Built in Ayodhya for clients worldwide.',
@@ -52,7 +55,7 @@ const PAGES = [
   {
     route: 'work',
     path: '/work',
-    file: 'work/index.html',
+    file: 'work.html',
     title: 'Portfolio — 50+ Projects Shipped · Awadh Software Solutions',
     description:
       'Selected work from Awadh Software Solutions: AyodhyaDham pilgrimage portal, the FreeUp marketplace, Adventure Amore, plus real estate, agritech, fintech and logistics projects.',
@@ -60,7 +63,7 @@ const PAGES = [
   {
     route: 'about',
     path: '/about',
-    file: 'about/index.html',
+    file: 'about.html',
     title: 'About — A Software Studio in Ayodhya Since 2014 · Awadh Software Solutions',
     description:
       'Founded in 2014 by Vishnu Mishra, Awadh Software Solutions is a studio of engineers, designers, marketers and SEO specialists in Ayodhya, Uttar Pradesh, serving clients in 8+ countries.',
@@ -68,7 +71,7 @@ const PAGES = [
   {
     route: 'contact',
     path: '/contact',
-    file: 'contact/index.html',
+    file: 'contact.html',
     title: 'Contact — Start a Project · Awadh Software Solutions',
     description:
       'Tell us about your project. Call or WhatsApp +91 70116 50803, email info@awadhsoftwaresolutions.com, or send a brief. A real person replies within 24 hours.',

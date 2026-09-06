@@ -10,10 +10,10 @@ import { readFileSync, existsSync } from 'node:fs';
 const SITE = 'https://awadhsoftware.com';
 const ROUTES = [
   ['/', 'dist/index.html'],
-  ['/services', 'dist/services/index.html'],
-  ['/work', 'dist/work/index.html'],
-  ['/about', 'dist/about/index.html'],
-  ['/contact', 'dist/contact/index.html'],
+  ['/services', 'dist/services.html'],
+  ['/work', 'dist/work.html'],
+  ['/about', 'dist/about.html'],
+  ['/contact', 'dist/contact.html'],
 ];
 
 let failed = 0;
