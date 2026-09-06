@@ -41,7 +41,9 @@ wrong for production. `npm run build`:
 - generates the favicon, Apple touch icon and 1200x630 `og:image` from the brand
   assets, plus `robots.txt`, `sitemap.xml` and `404.html`;
 - preloads the hero image, which is the Largest Contentful Paint element;
-- injects the hidden static form that Netlify Forms needs.
+- injects the hidden static form that Netlify Forms needs;
+- prerenders each route to static HTML with its own title, description, canonical
+  and structured data, and emits `sitemap.xml`, `robots.txt` and `llms.txt`.
 
 It refuses to build if the JSX files declare the same top-level name twice, or if
 the lead-capture code has gone missing from the contact form.
@@ -86,11 +88,16 @@ before promoting it heavily.
 
 Pull changes into the root source files as usual, then run `npm test`.
 
-One file carries a local change that the design project does not have:
-`components/contact-form.jsx` posts submissions to Netlify Forms. As authored by
-the design tool it showed a thank-you and discarded the brief. The block is
-marked `LEAD-CAPTURE`, and the build fails loudly if a re-sync removes it, so the
-data loss cannot come back silently.
+Two files carry local changes the design project does not have. Both are marked
+in the source, and the build fails loudly if a re-sync removes either, so neither
+regression can come back silently.
+
+- `components/contact-form.jsx` (`LEAD-CAPTURE`) posts submissions to Netlify
+  Forms. As authored by the design tool it showed a thank-you and discarded the
+  brief.
+- `app.jsx` (`ROUTE-SYNC`) maps each page onto a real URL. As authored, the site
+  was one stateful page, so Services, Portfolio, About and Contact had no URLs
+  and could not be indexed or prerendered.
 
 ## Known gaps
 

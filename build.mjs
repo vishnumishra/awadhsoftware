@@ -10,7 +10,8 @@
 
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import * as esbuild from 'esbuild';
 
 const ROOT = process.cwd();
@@ -27,6 +28,106 @@ const LEAD_FIELDS = [
   'projectType', 'industry', 'timeline', 'budget',
   'name', 'email', 'phone', 'company', 'message', 'contactPref',
 ];
+
+/* The pages the app can show, their URLs, and the per-page SEO copy. Each one is
+ * prerendered to static HTML so search engines get five indexable pages and AI
+ * crawlers - which mostly do not execute JavaScript - get the real content. */
+const PAGES = [
+  {
+    route: 'home',
+    path: '/',
+    file: 'index.html',
+    title: 'Awadh Software Solutions — Web, Mobile, AI & Digital Marketing in Ayodhya',
+    description:
+      'Software development and digital marketing studio in Ayodhya, India. Web apps, iOS and Android apps, AI/ML and agentic products, AI chatbots, SEO and ad campaigns. 11+ years, 50+ projects shipped.',
+  },
+  {
+    route: 'services',
+    path: '/services',
+    file: 'services/index.html',
+    title: 'Services — Web, Mobile, AI, Chatbots, SEO & Ads · Awadh Software Solutions',
+    description:
+      'Six capabilities under one roof: web applications, iOS and Android apps, AI/ML and agentic products, AI chatbots, digital marketing, and SEO including LLM SEO. Built in Ayodhya for clients worldwide.',
+  },
+  {
+    route: 'work',
+    path: '/work',
+    file: 'work/index.html',
+    title: 'Portfolio — 50+ Projects Shipped · Awadh Software Solutions',
+    description:
+      'Selected work from Awadh Software Solutions: AyodhyaDham pilgrimage portal, the FreeUp marketplace, Adventure Amore, plus real estate, agritech, fintech and logistics projects.',
+  },
+  {
+    route: 'about',
+    path: '/about',
+    file: 'about/index.html',
+    title: 'About — A Software Studio in Ayodhya Since 2014 · Awadh Software Solutions',
+    description:
+      'Founded in 2014 by Vishnu Mishra, Awadh Software Solutions is a studio of engineers, designers, marketers and SEO specialists in Ayodhya, Uttar Pradesh, serving clients in 8+ countries.',
+  },
+  {
+    route: 'contact',
+    path: '/contact',
+    file: 'contact/index.html',
+    title: 'Contact — Start a Project · Awadh Software Solutions',
+    description:
+      'Tell us about your project. Call or WhatsApp +91 70116 50803, email info@awadhsoftwaresolutions.com, or send a brief. A real person replies within 24 hours.',
+  },
+];
+
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/** Per-page structured data. The home page already carries the Organization,
+ *  LocalBusiness, ProfessionalService and FAQPage graph from index.html; every page
+ *  additionally gets a WebPage node, and subpages get breadcrumbs so search results
+ *  show the hierarchy. */
+function pageSchema(page) {
+  const url = `${SITE}${page.path === '/' ? '/' : page.path}`;
+  const graph = [
+    {
+      '@type': 'WebPage',
+      '@id': `${url}#webpage`,
+      url,
+      name: page.title,
+      description: page.description,
+      isPartOf: { '@id': `${SITE}/#website` },
+      about: { '@id': `${SITE}/#org` },
+      inLanguage: 'en-IN',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE}/#website`,
+      url: `${SITE}/`,
+      name: 'Awadh Software Solutions',
+      publisher: { '@id': `${SITE}/#org` },
+      inLanguage: ['en-IN', 'hi-IN'],
+    },
+  ];
+  if (page.path !== '/') {
+    graph.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+        { '@type': 'ListItem', position: 2, name: page.title.split(/ [-—] /)[0], item: url },
+      ],
+    });
+  }
+  const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+  return `<script type="application/ld+json">${json}</script>`;
+}
+
+/** Routing is what turns one stateful page into five indexable URLs. If a re-sync
+ *  from Claude Design drops it, every subpage silently becomes unreachable again
+ *  and the prerender collapses to five copies of the home page. */
+function assertRoutingIntact(code) {
+  if (!code.includes('ROUTE-SYNC') || !code.includes('pageFromPath')) {
+    throw new Error(
+      'app.jsx no longer maps pages to URLs.\n' +
+        '  The ROUTE-SYNC block was probably lost in a re-sync from Claude Design.\n' +
+        '  Without it Services / Portfolio / About / Contact have no URLs and cannot be indexed.'
+    );
+  }
+}
 
 /** The contact form is the site's only lead channel. As shipped by the design tool
  *  it showed a thank-you and discarded the brief; components/contact-form.jsx now
@@ -184,6 +285,68 @@ async function buildBrandArtwork(sharp) {
   return { favicon, og };
 }
 
+/* --------------------------------------------------------------- prerender */
+
+/** Builds a Node-side copy of the app and returns render(pathname) -> HTML string.
+ *
+ *  The component files were written for classic <script> tags: they assign to
+ *  `window` at module scope and app.jsx mounts a React root on import. So the
+ *  bundle gets a minimal DOM surface and a no-op createRoot, and exports a render
+ *  function that drives the real component tree through react-dom/server. */
+async function buildRenderer(files, runtime) {
+  const prelude = `
+import * as React from 'react';
+// server.browser, not server: renderToString needs no Node streams, and the plain
+// entry drags in CommonJS stream internals that cannot be bundled to ESM.
+import { renderToString } from 'react-dom/server.browser';
+
+const stubEl = { style: {}, setAttribute() {}, removeAttribute() {}, appendChild() {}, removeChild() {}, addEventListener() {}, removeEventListener() {} };
+// Some of these already exist on modern Node and are read-only (navigator), so
+// define defensively rather than assigning.
+const put = (key, value) => {
+  try { Object.defineProperty(globalThis, key, { value, writable: true, configurable: true }); }
+  catch { /* keep whatever Node already provides */ }
+};
+put('window', globalThis);
+put('location', { pathname: '/', search: '', hash: '', href: '${SITE}/' });
+put('history', { pushState() {}, replaceState() {} });
+put('document', {
+  documentElement: stubEl, body: stubEl, title: '',
+  getElementById: () => stubEl, createElement: () => stubEl,
+  querySelector: () => null, querySelectorAll: () => [],
+  addEventListener() {}, removeEventListener() {},
+});
+put('addEventListener', () => {});
+put('removeEventListener', () => {});
+put('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
+
+window.React = React;
+window.ReactDOM = { createRoot: () => ({ render() {}, unmount() {} }) };
+`;
+  const epilogue = `
+export function renderPage(pathname) {
+  globalThis.location = { ...globalThis.location, pathname, href: '${SITE}' + pathname };
+  return renderToString(React.createElement(App));
+}
+`;
+  const entry = [prelude, runtime, ...files.map((f) => `\n/* ---- ${f.path} ---- */\n${f.code}`), epilogue].join('\n');
+
+  const outfile = join(ROOT, 'node_modules', '.cache', 'awadh-ssr.mjs');
+  await mkdir(dirname(outfile), { recursive: true });
+  await esbuild.build({
+    stdin: { contents: entry, resolveDir: ROOT, loader: 'jsx', sourcefile: 'ssr-entry.jsx' },
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    target: ['node20'],
+    define: { 'process.env.NODE_ENV': '"production"' },
+    outfile,
+  });
+
+  const mod = await import(pathToFileURL(outfile).href + `?v=${Date.now()}`);
+  return mod.renderPage;
+}
+
 /* -------------------------------------------------------------------- html */
 
 /** Conservative HTML minification: inline <script>/<style> bodies are pulled out
@@ -248,6 +411,7 @@ async function main() {
   }
   assertNoDuplicateDeclarations(files);
   assertLeadCaptureIntact(files.find((f) => f.path.endsWith('contact-form.jsx'))?.code ?? '');
+  assertRoutingIntact(files.find((f) => f.path === 'app.jsx')?.code ?? '');
 
   /* ---- javascript ---- */
   const runtime = await readFile(join(ROOT, 'build', 'runtime.js'), 'utf8');
@@ -296,6 +460,13 @@ async function main() {
   out = out.replace('<link rel="stylesheet" href="styles.css"/>', `<link rel="stylesheet" href="/${cssName}"/>`);
   if (!out.includes(cssName)) throw new Error('Could not swap the stylesheet link in index.html');
 
+  // Asset paths in the components are relative ("assets/hero-fade.png"). Now that
+  // pages live at /services, /work and so on, those would resolve against the
+  // subdirectory and 404. A base URL fixes both the prerendered markup and the
+  // paths the client builds at runtime, without touching the design-synced source.
+  out = out.replace('<meta charset="utf-8"/>', '<meta charset="utf-8"/>\n  <base href="/"/>');
+  if (!out.includes('<base href="/"/>')) throw new Error('Could not insert the base URL');
+
   const head = [];
   if (art.favicon) {
     head.push('<link rel="icon" href="/favicon.png" sizes="any"/>');
@@ -325,26 +496,100 @@ async function main() {
 
   out = out.replace('</body>', `  <script src="/${jsName}" defer></script>\n</body>`);
 
-  const htmlOut = await minifyHtml(out);
-  if (htmlOut.includes('text/babel')) throw new Error('Babel script tags survived into dist/index.html');
-  if (htmlOut.includes('unpkg.com')) throw new Error('CDN script tags survived into dist/index.html');
-  await writeFile(join(OUT, 'index.html'), htmlOut);
-  log(`  html       index.html  ${kb(html.length)} -> ${kb(htmlOut.length)}`);
+  /* ---- prerender one static page per route ---- */
+  const renderPage = await buildRenderer(files, runtime);
+  const shell = out;
+  let htmlOut = null;
+  let renderedTotal = 0;
+
+  for (const page of PAGES) {
+    const url = `${SITE}${page.path === '/' ? '/' : page.path}`;
+    const appHtml = renderPage(page.path);
+    renderedTotal += appHtml.length;
+
+    let doc = shell
+      .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(page.title)}</title>`)
+      .replace(/<meta name="description" content="[\s\S]*?"\/>/, `<meta name="description" content="${esc(page.description)}"/>`)
+      .replace(/<link rel="canonical" href="[^"]*"\/>/, `<link rel="canonical" href="${url}"/>`)
+      .replace(/<meta property="og:url" content="[^"]*"\/>/, `<meta property="og:url" content="${url}"/>`)
+      .replace(/<meta property="og:title" content="[\s\S]*?"\/>/, `<meta property="og:title" content="${esc(page.title)}"/>`)
+      .replace(/<meta property="og:description" content="[\s\S]*?"\/>/, `<meta property="og:description" content="${esc(page.description)}"/>`)
+      .replace(/<meta name="twitter:title" content="[\s\S]*?"\/>/, `<meta name="twitter:title" content="${esc(page.title)}"/>`)
+      .replace(/<meta name="twitter:description" content="[\s\S]*?"\/>/, `<meta name="twitter:description" content="${esc(page.description)}"/>`);
+
+    // Seed #root so the content exists before any JavaScript runs.
+    doc = doc.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
+    if (!doc.includes(appHtml.slice(0, 60))) throw new Error(`Prerendered markup did not land in ${page.file}`);
+
+    doc = doc.replace('</head>', `  ${pageSchema(page)}\n</head>`);
+
+    const minified = await minifyHtml(doc);
+    if (minified.includes('text/babel')) throw new Error('Babel script tags survived into the build');
+    if (minified.includes('unpkg.com')) throw new Error('CDN script tags survived into the build');
+
+    await mkdir(dirname(join(OUT, page.file)), { recursive: true });
+    await writeFile(join(OUT, page.file), minified);
+    if (page.route === 'home') htmlOut = minified;
+  }
+
+  log(`  html       ${PAGES.length} prerendered pages  ${kb(renderedTotal / PAGES.length)} avg markup each`);
 
   /* ---- static extras ---- */
-  await writeFile(join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Explicitly welcome the AI crawlers: this site sells LLM SEO, so being readable
+  // by answer engines is the point.
+  await writeFile(
+    join(OUT, 'robots.txt'),
+    'User-agent: *\nAllow: /\n\n' +
+      '# Answer engines and AI crawlers are welcome.\n' +
+      ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'Bytespider', 'meta-externalagent', 'Amazonbot', 'cohere-ai', 'YouBot', 'DuckAssistBot']
+        .map((ua) => `User-agent: ${ua}\nAllow: /\n`)
+        .join('\n') +
+      `\nSitemap: ${SITE}/sitemap.xml\n`
+  );
+
   await writeFile(
     join(OUT, 'sitemap.xml'),
-    '<?xml version="1.0" encoding="UTF-8"?>\n' +
-      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-      `  <url>\n    <loc>${SITE}/</loc>\n    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>\n` +
-      '    <changefreq>monthly</changefreq>\n    <priority>1.0</priority>\n  </url>\n</urlset>\n'
+    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+      PAGES.map(
+        (p) =>
+          `  <url>\n    <loc>${SITE}${p.path === '/' ? '/' : p.path}</loc>\n    <lastmod>${today}</lastmod>\n` +
+          `    <changefreq>monthly</changefreq>\n    <priority>${p.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`
+      ).join('\n') +
+      '\n</urlset>\n'
   );
+
+  // llms.txt: an emerging convention giving answer engines a clean, plain-text
+  // summary of the site instead of making them infer it from rendered markup.
+  await writeFile(
+    join(OUT, 'llms.txt'),
+    `# Awadh Software Solutions\n\n` +
+      `> Software development and digital marketing studio in Ayodhya, Uttar Pradesh, India. ` +
+      `Founded in 2014 by Vishnu Mishra. 11+ years, 50+ projects shipped for clients in 8+ countries.\n\n` +
+      `Contact: +91 70116 50803 (phone and WhatsApp), info@awadhsoftwaresolutions.com, HIG A-11 Saketpuri, Ayodhya, Uttar Pradesh, India.\n\n` +
+      `## Services\n\n` +
+      `- Web application development (React, Next.js, Node.js, Postgres)\n` +
+      `- Mobile app development for iOS and Android (React Native, Swift, Kotlin)\n` +
+      `- AI/ML and agentic product development (LLM apps, RAG pipelines, evaluations)\n` +
+      `- AI chatbot development (WhatsApp, web, voice; multilingual Hindi and English)\n` +
+      `- Digital marketing (Google, Meta and YouTube campaigns, landing-page CRO)\n` +
+      `- SEO and LLM SEO / generative engine optimisation\n\n` +
+      `## Pages\n\n` +
+      PAGES.map((p) => `- [${p.title.split(/ [-—] /)[0]}](${SITE}${p.path === '/' ? '/' : p.path}): ${p.description}`).join('\n') +
+      `\n\n## Selected work\n\n` +
+      `- AyodhyaDham.info: pilgrimage portal with darshan timings, bookings and live updates\n` +
+      `- FreeUp.net: two-sided North American marketplace, built end to end\n` +
+      `- AdventureAmore.com: premium travel brand rebuilt around conversion\n\n` +
+      `## Service area\n\n` +
+      `Ayodhya, Lucknow, Uttar Pradesh, all of India, and international clients.\n`
+  );
+
   await writeFile(
     join(OUT, '404.html'),
     htmlOut.replace(/<title>[^<]*<\/title>/, '<title>Page not found - Awadh Software Solutions</title>')
   );
-  log('  static     robots.txt, sitemap.xml, 404.html');
+  log(`  static     robots.txt, sitemap.xml (${PAGES.length} urls), llms.txt, 404.html`);
 
   /* ---- report ---- */
   let total = 0;

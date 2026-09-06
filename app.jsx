@@ -3,8 +3,32 @@ const { useState, useEffect } = React;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{}/*EDITMODE-END*/;
 
+// ROUTE-SYNC: the design tool ships this as one stateful page with no URLs, which
+// leaves Services / Portfolio / About / Contact unreachable to search engines and
+// to AI crawlers. Mapping the state onto real paths makes each page indexable and
+// lets build.mjs prerender it. build.mjs fails the build if this block is lost in
+// a re-sync from Claude Design.
+const ROUTES = { home: '/', services: '/services', work: '/work', about: '/about', contact: '/contact' };
+const pageFromPath = (raw) => {
+  const p = (raw || '/').replace(/\/+$/, '') || '/';
+  return Object.keys(ROUTES).find((k) => ROUTES[k] === p) || 'home';
+};
+
 const App = () => {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setPage] = useState(() =>
+    typeof location === 'undefined' ? 'home' : pageFromPath(location.pathname)
+  );
+  const setActivePage = React.useCallback((page) => {
+    setPage(page);
+    if (typeof history !== 'undefined' && ROUTES[page] && location.pathname !== ROUTES[page]) {
+      history.pushState({ page }, '', ROUTES[page]);
+    }
+  }, []);
+  useEffect(() => {
+    const onPop = () => setPage(pageFromPath(location.pathname));
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   const [chatOpen, setChatOpen] = useState(false);
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [lang, setLang] = useState(() => {
