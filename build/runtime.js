@@ -19,7 +19,7 @@ function TweakButton() { return null; }
 
 /* 2. components/chatbot.jsx calls window.claude.complete(), which is provided by
       Claude's design preview and is absent in a browser. Point it at our own
-      endpoint so the widget works once ANTHROPIC_API_KEY is set in Netlify. */
+      endpoint so the widget works once GEMINI_API_KEY is set in Netlify. */
 if (!window.claude || typeof window.claude.complete !== 'function') {
   window.claude = {
     complete: async function (options) {

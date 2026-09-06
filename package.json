@@ -15,7 +15,7 @@
     "test": "npm run build && node test/build-output.test.mjs && node test/chat-function.test.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.124.0",
+    "@google/genai": "^2.21.0",
     "esbuild": "^0.28.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",

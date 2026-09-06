@@ -66,15 +66,21 @@ the `form` state object in `components/contact-form.jsx`.
 inside Claude's design preview. In production `build/runtime.js` points that call
 at `/api/chat`, served by `netlify/functions/chat.mjs`.
 
-Set `ANTHROPIC_API_KEY` in Netlify (Site settings → Environment variables) to
-switch the assistant on. Without it the endpoint still responds and hands the
-visitor to phone and email, so the widget degrades instead of breaking.
+The assistant runs on **Google Gemini** via `@google/genai`. Create a key at
+<https://aistudio.google.com/apikey> and set `GEMINI_API_KEY` in Netlify
+(Site settings → Environment variables) to switch it on. Without it the endpoint
+still responds and hands the visitor to phone and email, so the widget degrades
+instead of breaking.
 
-The function defaults to `claude-opus-5`. Set `CHAT_MODEL` to
-`claude-haiku-4-5` for a cheaper, faster assistant. The endpoint is public and
-every message costs money: it caps message count and length and pins a
-server-side system prompt, but consider adding rate limiting before promoting it
-heavily.
+The function defaults to `gemini-2.5-flash`, which is fast and inexpensive and
+fits the ~10s Netlify function budget. Set `CHAT_MODEL` to use another model,
+for example `gemini-2.5-pro` for stronger answers at higher latency and cost.
+Thinking is disabled for latency; remove `thinkingConfig` in
+`netlify/functions/chat.mjs` if you want the model to deliberate.
+
+The endpoint is public and every message costs money: it caps message count and
+length and pins a server-side system prompt, but consider adding rate limiting
+before promoting it heavily.
 
 ## Re-syncing from Claude Design
 

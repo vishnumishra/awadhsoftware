@@ -1,23 +1,26 @@
-// Chatbot backend for the "Awadh AI" widget.
+// Chatbot backend for the "Awadh AI" widget, powered by Google Gemini.
 //
 // The widget in components/chatbot.jsx calls window.claude.complete(), which only
 // exists inside Claude's design preview. In production the shim added by build.mjs
 // points that call here instead.
 //
-// Set ANTHROPIC_API_KEY in the Netlify UI (Site settings > Environment variables)
-// to switch the assistant on. Without it the endpoint stays up and returns a
-// polite hand-off message, so the widget degrades instead of erroring.
+// Set GEMINI_API_KEY in the Netlify UI (Site settings > Environment variables) to
+// switch the assistant on. Get a key from https://aistudio.google.com/apikey.
+// Without it the endpoint stays up and returns a polite hand-off message, so the
+// widget degrades instead of erroring.
 
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI, ApiError } from '@google/genai';
 
-const MODEL = process.env.CHAT_MODEL || 'claude-opus-5';
+const MODEL = process.env.CHAT_MODEL || 'gemini-2.5-flash';
 const MAX_MESSAGES = 24;
 const MAX_CHARS_PER_MESSAGE = 4000;
 const MAX_TOTAL_CHARS = 24000;
+// Netlify's synchronous functions stop at ~10s, so give up before the platform does.
+const TIMEOUT_MS = 8500;
 
 // Enforced server-side. The browser also sends its own preamble, but this is the
 // instruction the model actually takes its identity and limits from, so the
-// endpoint cannot be repurposed as a general-purpose LLM.
+// endpoint cannot be repurposed as a general-purpose chatbot.
 const SYSTEM = `You are "Awadh AI", the assistant on awadhsoftware.com for Awadh Software Solutions,
 a software development and digital marketing studio in Ayodhya, Uttar Pradesh, India.
 Founded in 2014 by Vishnu Mishra. 11+ years, 50+ projects shipped.
@@ -62,60 +65,64 @@ export default async (req) => {
   if (incoming.length > MAX_MESSAGES) return json({ error: 'Conversation too long' }, 413);
 
   let total = 0;
-  const messages = [];
+  const contents = [];
   for (const m of incoming) {
-    const role = m?.role === 'assistant' ? 'assistant' : 'user';
-    const content = typeof m?.content === 'string' ? m.content : '';
-    if (!content.trim()) continue;
-    if (content.length > MAX_CHARS_PER_MESSAGE) return json({ error: 'Message too long' }, 413);
-    total += content.length;
+    // Gemini names the assistant turn "model", not "assistant".
+    const role = m?.role === 'assistant' || m?.role === 'model' ? 'model' : 'user';
+    const text = typeof m?.content === 'string' ? m.content : '';
+    if (!text.trim()) continue;
+    if (text.length > MAX_CHARS_PER_MESSAGE) return json({ error: 'Message too long' }, 413);
+    total += text.length;
     if (total > MAX_TOTAL_CHARS) return json({ error: 'Conversation too long' }, 413);
-    messages.push({ role, content });
+    contents.push({ role, parts: [{ text }] });
   }
-  if (messages.length === 0) return json({ error: 'No usable message content' }, 400);
-  if (messages[0].role !== 'user') messages.unshift({ role: 'user', content: 'Hello' });
+  if (contents.length === 0) return json({ error: 'No usable message content' }, 400);
+  // A conversation has to open on a user turn.
+  if (contents[0].role !== 'user') contents.unshift({ role: 'user', parts: [{ text: 'Hello' }] });
 
   // No key configured: stay up, hand the visitor to a human.
-  if (!process.env.ANTHROPIC_API_KEY) return json({ completion: HANDOFF, configured: false });
+  if (!process.env.GEMINI_API_KEY) return json({ completion: HANDOFF, configured: false });
 
-  const client = new Anthropic({
-    // Netlify's synchronous functions stop at ~10s, so fail before the platform does.
-    timeout: 8500,
-    maxRetries: 0,
-  });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const abort = AbortSignal.timeout(TIMEOUT_MS);
 
   try {
-    const response = await client.messages.create({
+    const response = await ai.models.generateContent({
       model: MODEL,
-      max_tokens: 700,
-      system: SYSTEM,
-      // Keep replies quick and cheap; this is a short front-of-site Q&A.
-      output_config: { effort: 'low' },
-      messages,
+      contents,
+      config: {
+        systemInstruction: SYSTEM,
+        maxOutputTokens: 700,
+        temperature: 0.6,
+        // Front-of-site Q&A does not need deliberation, and the latency budget is tight.
+        thinkingConfig: { thinkingBudget: 0 },
+        abortSignal: abort,
+      },
     });
 
-    if (response.stop_reason === 'refusal') {
-      return json({ completion: HANDOFF, refused: true });
+    const finish = response.candidates?.[0]?.finishReason;
+    if (finish === 'SAFETY' || finish === 'PROHIBITED_CONTENT' || finish === 'BLOCKLIST' || finish === 'SPII') {
+      console.warn(`[chat] response blocked, finishReason=${finish}`);
+      return json({ completion: HANDOFF, blocked: true });
     }
 
-    const text = response.content
-      .filter((b) => b.type === 'text')
-      .map((b) => b.text)
-      .join('')
-      .trim();
-
+    const text = (response.text || '').trim();
     return json({ completion: text || HANDOFF });
   } catch (error) {
-    if (error instanceof Anthropic.AuthenticationError) {
-      console.error('[chat] ANTHROPIC_API_KEY rejected');
-      return json({ completion: HANDOFF, configured: false });
+    if (error?.name === 'AbortError' || error?.name === 'TimeoutError') {
+      console.error('[chat] upstream timed out');
+      return json({ completion: 'That took longer than expected. ' + HANDOFF });
     }
-    if (error instanceof Anthropic.RateLimitError) {
-      console.error('[chat] rate limited');
-      return json({ completion: 'We are getting a lot of questions right now. ' + HANDOFF }, 200);
-    }
-    if (error instanceof Anthropic.APIError) {
-      console.error(`[chat] API error ${error.status}: ${error.message}`);
+    if (error instanceof ApiError) {
+      if (error.status === 401 || error.status === 403) {
+        console.error('[chat] GEMINI_API_KEY rejected');
+        return json({ completion: HANDOFF, configured: false });
+      }
+      if (error.status === 429) {
+        console.error('[chat] rate limited by Gemini');
+        return json({ completion: 'We are getting a lot of questions right now. ' + HANDOFF });
+      }
+      console.error(`[chat] Gemini API error ${error.status}: ${error.message}`);
     } else {
       console.error('[chat] unexpected failure', error);
     }
